@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Notifications Dynamiques</title>
+  </head>
+  <body>
+    <h1>Planificateur de Notifications</h1>
+
+    <form id="notificationForm">
+      <label for="notificationDate">Date :</label>
+      <input type="date" id="notificationDate" name="notificationDate" />
+
+      <label for="notificationTime">Heure :</label>
+      <input type="time" id="notificationTime" name="notificationTime" />
+
+      <button type="button" id="requestPermissionBtn">
+        Autoriser les notifications
+      </button>
+    </form>
+
+    <script>
+      document
+        .getElementById('requestPermissionBtn')
+        .addEventListener('click', function () {
+          if (Notification.permission === 'default') {
+            Notification.requestPermission().then(function (permission) {
+              if (permission === 'granted') {
+                planifierNotification();
+              } else {
+                alert('Les notifications sont refusées.');
+              }
+            });
+          } else if (Notification.permission === 'granted') {
+            planifierNotification();
+          }
+        });
+
+      function planifierNotification() {
+        var notificationDate =
+          document.getElementById('notificationDate').value;
+        var notificationTime =
+          document.getElementById('notificationTime').value;
+
+        var selectedDate = new Date(notificationDate + ' ' + notificationTime);
+        var now = new Date();
+
+        var delay = selectedDate - now;
+
+        if (delay < 0) {
+          alert("La date et l'heure sélectionnées sont dans le passé.");
+          return;
+        }
+
+        setTimeout(function () {
+          new Notification('Notification planifiée !', {
+            body: "C'est le moment que vous avez choisi !",
+            icon: 'notification-icon.png', // Remplacez "notification-icon.png" par le chemin de votre propre icône
+          });
+        }, delay);
+      }
+    </script>
+  </body>
+</html>
